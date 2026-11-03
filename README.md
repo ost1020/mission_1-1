@@ -262,9 +262,54 @@ drwxrwxrwx@ 2 taek  staff  64 Nov  3 17:02 test_dir
 > 이 때문에 디렉토리를 정상적으로 사용하려면 보통 읽기(r)와 진입(x) 권한을 세트(r-x, 숫자 5)로 묶어서 부여한다.
 
 ### 4.3. Docker 설치 및 기본 점검
-**검증 방법:** 터미널에서 버전을 확인하고 도커 데몬 동작 여부를 점검
+**검증 방법:** 터미널에서 Docker 버전을 확인하고, 데몬(엔진)이 정상적으로 백그라운드에서 동작하고 있는지 상세 정보를 출력하여 점검한다.
 
+**1. 기본 점검 실습 로그**
+```bash
+taek@OHs-MacBook-Air codyssey-practice % docker --version
+Docker version 29.9.2, build a82e528
+taek@OHs-MacBook-Air codyssey-practice % docker info
+Client:
+ Version:    29.9.2
+ Context:    desktop-linux
+ Debug Mode: false
+ # ... (중략: 플러그인 목록 정상 출력됨) ...
+Server:
+ Containers: 2
+  Running: 0
+  Paused: 0
+  Stopped: 2
+ Images: 2
+ Server Version: 29.9.2
+ Storage Driver: overlayfs
+ # ... (중략: 네트워크 및 시스템 자원 정보 정상 출력됨) ...
+ Operating System: Docker Desktop
+ OSType: linux
+ Architecture: aarch64
+ CPUs: 10
+ Total Memory: 7.748GiB
+ Name: docker-desktop
+```
+#### 추가 학습 및 Q&A (명령어 옵션 -와 --의 차이)
 
+> **❓ 나의 질문:** docker --version을 입력할 때 하이픈을 두 개(--) 붙이는 것은 어떤 의미인지 궁금함.
+
+> **💡 AI의 답변:**
+>명령어의 옵션을 부여할 때 '단축형(Short)'과 '상세형(Long)'을 구분하기 위한 표준 규칙이다.
+> '-' (하이픈 1개): 알파벳 한 글자로 된 단축 옵션에 사용한다. (예: -v, -a). 여러 개를 이어서 쓸 수 있다 (예: -al).
+> -- (하이픈 2개): 단어 형태로 된 상세 옵션에 사용한다. (예: --version, --help).
+> 만약 -version이라고 입력하면 시스템은 이를 v, e, r 등 개별 단축 옵션 7개가 결합된 것으로 오해하므로, "이것은 하나의 단어다"라는 것을 명확히 시스템(쉘)에 전달하기 위해 --를 사용한다.
+
+> **❓ 나의 질문:** Docker 기본 점검 단계에서 언급된 '데몬(Daemon)'이란 정확히 무엇인지 궁금함.
+>
+> **💡 AI의 답변:** 
+> '데몬(Daemon)'은 사용자가 직접 제어하지 않아도 컴퓨터 백그라운드에서 항상 실행되며 요청을 기다리고 처리해 주는 서비스(프로그램)를 의미한다. 
+> 
+> 도커는 클라이언트-서버 구조로 이루어져 있다.
+> * **Client (터미널의 `docker` 명령어):** 사용자의 명령(주문)을 받아 전달하는 역할.
+> * **Server (도커 데몬, `dockerd`):** 클라이언트의 명령을 받아 실제로 이미지를 다운로드하고 컨테이너를 생성/실행하는 핵심 백그라운드 프로세스.
+> 
+> 즉, `docker info`에서 데몬 동작 여부를 확인한다는 것은 "내 명령어를 받아 실제로 처리해 줄 백그라운드 엔진이 정상적으로 켜져 있는가?"를 점검하는 필수 과정이다.
 
 ### 4.4. 컨테이너 실행 실습
 **검증 방법:** `hello-world`와 `ubuntu` 컨테이너를 차례로 실행하고 내부 진입 실험 수행
