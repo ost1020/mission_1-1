@@ -113,6 +113,8 @@ user.email=ost102***@gmail.com
 init.defaultbranch=main
 ```
 
+![깃허브 연동 증명](./비주얼 스튜디오 깃허브 연동.png)
+
 ---
 
 ## 5. 트러블슈팅
