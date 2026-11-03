@@ -68,11 +68,50 @@ $ docker info
 ### 4.4. 컨테이너 실행 실습
 **검증 방법:** `hello-world`와 `ubuntu` 컨테이너를 차례로 실행하고 내부 진입 실험 수행
 ```bash
-$ docker run hello-world
-(출력 결과 복사붙여넣기)
+taek@OHs-MacBook-Air mission_1-1 % docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+58dee6a49ef1: Pull complete 
+c3bdf82c34d1: Download complete 
+Digest: sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+Status: Downloaded newer image for hello-world:latest
 
-(이후 ubuntu 컨테이너 실행 관련 로그 및 관찰 내용 정리)
-```
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (arm64v8)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+taek@OHs-MacBook-Air mission_1-1 % docker run -it ubuntu bash
+Unable to find image 'ubuntu:latest' locally
+latest: Pulling from library/ubuntu
+6f01cc7d6fb3: Pull complete 
+afa7f7d582de: Pull complete 
+d597c14cfeb9: Download complete 
+Digest: sha256:6a06111c3b0a8600feadb270aec771dc239bf407b25625f93f44ab00e11f4d3c
+Status: Downloaded newer image for ubuntu:latest
+root@753aa9e3ea74:/# ls
+bin   dev  home  media  opt   root  sbin  sys  usr
+boot  etc  lib   mnt    proc  run   srv   tmp  var
+root@753aa9e3ea74:/# echo hi
+hi
+root@753aa9e3ea74:/# exit
+exit```
 
 ### 4.5. 기존 Dockerfile 기반 커스텀 이미지 제작
 * **선택한 베이스 이미지:** (예: NGINX, Ubuntu 등)
