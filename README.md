@@ -29,18 +29,45 @@
 ### 4.1. 터미널 조작 로그 기록
 **검증 방법:** 현재 위치 확인, 폴더/파일 생성, 복사, 이동, 삭제 명령을 수행하여 확인
 ```bash
-$ pwd
-/Users/macbook (본인의 실제 경로)
-$ mkdir codyssey-mission
-$ cd codyssey-mission
-$ touch test.txt
-$ ls -la
-(출력 결과 복사붙여넣기)
-$ cp test.txt copy.txt
-$ mv copy.txt rename.txt
-$ cat test.txt
-$ rm rename.txt
+# 1. 위치 확인 및 폴더 생성/진입
+taek@OHs-MacBook-Air mission_1-1 % pwd
+/Users/taek/mission_1-1
+# pwd (Print Working Directory): 현재 내가 위치한 폴더의 전체 경로를 알려줌. 터미널 안에서 "나 지금 컴퓨터 안에서 정확히 어디쯤 있지?" 하고 길을 잃었을 때 치는 나침반 같은 명령어.
+taek@OHs-MacBook-Air mission_1-1 % mkdir codyssey-practice
+# mkdir (Make Directory): 새 폴더를 만드는 명령어. mkdir codyssey-practice로 실습 전용 방을 하나 새로 팜.
+taek@OHs-MacBook-Air mission_1-1 % cd codyssey-practice
+# cd (Change Directory): 다른 폴더로 이동할 때 씀. 방금 만든 codyssey-practice 방 안으로 쏙 들어감. (cd ..이라고 치면 다시 바깥 폴더로 빠져나올 수 있음.)
+
+# 2. 빈 파일 생성 및 권한/상세 리스트 확인
+taek@OHs-MacBook-Air codyssey-practice % touch text.txt
+# touch: 내용이 텅 빈 새 파일을 뚝딱 만들어주는 명령어. touch text.txt를 쳐서 텍스트 파일을 하나 생성함.
+taek@OHs-MacBook-Air codyssey-practice % ls -la
+# ls -la (List): 현재 폴더 안에 뭐가 있는지 목록을 쫙 보여줌. -l 옵션은 권한, 용량, 만든 날짜 같은 상세 정보를 보겠다는 뜻, -a 옵션은 이름 앞에 점(.)이 붙은 숨겨진 파일까지 남김없이 다 보여달라는 뜻.
+
+# 3. 파일 복사, 이동(이름 변경), 내용 출력, 삭제 실습
+taek@OHs-MacBook-Air codyssey-practice % cp text.txt copy.txt
+# cp (Copy): 파일 복사하기. cp text.txt copy.txt는 원본 파일(text.txt)을 복사해서 copy.txt라는 똑같은 파일을 하나 더 만듦.
+taek@OHs-MacBook-Air codyssey-practice % mv copy.txt rename.txt
+# mv (Move): 파일의 위치를 옮기거나, 이름을 바꿀 때 씀. 지금은 mv copy.txt rename.txt라고 쳐서 파일 이름을 rename.txt로 쓱 바꿔치기함.
+taek@OHs-MacBook-Air codyssey-practice % cat text.txt
+# cat (Concatenate): 파일 안에 적힌 내용을 터미널 화면에 텍스트로 그대로 출력해서 보여줌. 지금은 빈 파일이었기 때문에 아무 글자도 안 나오고 끝남.
+taek@OHs-MacBook-Air codyssey-practice % rm rename.txt
+# rm (Remove): 파일을 삭제하는 명령어. 윈도우나 맥의 휴지통으로 가는 게 아니라 그 자리에서 즉시 영구 삭제되니까 실전에서는 꽤 조심해서 써야 함. rm rename.txt로 필요 없어진 파일을 깔끔하게 날려버림.
 ```
+**추가 학습 및 Q&A**
+
+❓ 나의 질문: 실습 중 mv copy.txt rename.txt 명령어를 통해 파일의 '이름'을 바꿨는데, 파일의 '위치'를 다른 폴더로 옮길 때는 mv를 어떻게 사용해야 하는지 궁금함.
+💡 AI의 답변:
+파일을 다른 폴더로 옮길 때는 mv [옮길 파일명] [목적지 폴더 경로] 순서로 입력하면 된다. mv 명령어 하나로 파일의 경로(위치)와 이름을 모두 제어할 수 있다. 자주 쓰이는 3가지 활용법은 다음과 같다.
+하위 폴더(새 방)로 이동: mv text.txt backup/
+상위 폴더(바깥 방)로 끄집어낼 때: mv text.txt .. (..은 상위 디렉토리를 의미함)
+위치를 옮기며 이름도 동시에 바꿀 때: mv text.txt backup/new.txt
+
+❓ 나의 질문: 문서 작성 중 코드블록 안팎에서 # 기호를 쓸 때, 이게 실행에 관여하지 않는 '주석(죽은 줄)'으로 쓰이는지 아니면 단순히 글자를 강조(제목)하는 용도로 쓰이는지 헷갈림.
+💡 AI의 답변:
+# 기호는 쓰이는 위치(코드블록 안과 밖)에 따라 역할이 완전히 달라진다.
+코드블록(예: bash ... ) 안에서: 마크다운 문법이 아닌 해당 언어(bash)의 규칙을 따른다. 따라서 컴퓨터가 실행하지 않고 건너뛰는 '주석(Comment, 죽은 줄)' 역할을 하므로 안전하게 부연 설명을 적을 수 있다.
+코드블록 밖(일반 마크다운)에서: 줄 맨 앞에 쓰면 글자를 크고 진하게 만들어주는 '제목(Header, 강조)' 역할을 한다. (예: ### 4.1.)
 
 ### 4.2. 권한 실습 및 증거 기록
 **검증 방법:** 파일과 디렉토리를 생성하고 `chmod` 명령어로 권한 변경 전과 후를 비교
