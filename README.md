@@ -6,10 +6,10 @@
 
 ## 2. 실행 환경
 * **OS:** macOS (Apple Silicon)
-* **Shell:** zsh 
-* **Terminal:** macOS 기본 터미널
-* **Docker:** (여기에 `docker --version` 결과 입력. 예: Docker version 26.x.x)
-* **Git:** (여기에 `git --version` 결과 입력. 예: git version 2.x.x)
+* **Shell:** zsh (`/bin/zsh`)
+* **Terminal:** vscode
+* **Docker:** Docker version 29.9.2, build a82e528
+* **Git:** git version 2.56.0
 
 ## 3. 수행 체크리스트
 - [x] 터미널 기본 조작 및 폴더 구성
