@@ -56,18 +56,20 @@ taek@OHs-MacBook-Air codyssey-practice % rm rename.txt
 ```
 #### **추가 학습 및 Q&A**
 
-❓ 나의 질문: 실습 중 mv copy.txt rename.txt 명령어를 통해 파일의 '이름'을 바꿨는데, 파일의 '위치'를 다른 폴더로 옮길 때는 mv를 어떻게 사용해야 하는지 궁금함.
-💡 AI의 답변:
-파일을 다른 폴더로 옮길 때는 mv [옮길 파일명] [목적지 폴더 경로] 순서로 입력하면 된다. mv 명령어 하나로 파일의 경로(위치)와 이름을 모두 제어할 수 있다. 자주 쓰이는 3가지 활용법은 다음과 같다.
-하위 폴더(새 방)로 이동: mv text.txt backup/
-상위 폴더(바깥 방)로 끄집어낼 때: mv text.txt .. (..은 상위 디렉토리를 의미함)
-위치를 옮기며 이름도 동시에 바꿀 때: mv text.txt backup/new.txt
-
-❓ 나의 질문: 문서 작성 중 코드블록 안팎에서 # 기호를 쓸 때, 이게 실행에 관여하지 않는 '주석(죽은 줄)'으로 쓰이는지 아니면 단순히 글자를 강조(제목)하는 용도로 쓰이는지 헷갈림.
-💡 AI의 답변:
-'#' 기호는 쓰이는 위치(코드블록 안과 밖)에 따라 역할이 완전히 달라진다.
-코드블록(예: bash ... ) 안에서: 마크다운 문법이 아닌 해당 언어(bash)의 규칙을 따른다. 따라서 컴퓨터가 실행하지 않고 건너뛰는 '주석(Comment, 죽은 줄)' 역할을 하므로 안전하게 부연 설명을 적을 수 있다.
-코드블록 밖(일반 마크다운)에서: 줄 맨 앞에 쓰면 글자를 크고 진하게 만들어주는 '제목(Header, 강조)' 역할을 한다. (예: ### 4.1.)
+> ❓ 나의 질문: 실습 중 mv copy.txt rename.txt 명령어를 통해 파일의 '이름'을 바꿨는데, 파일의 '위치'를 다른 폴더로 옮길 때는 mv를 어떻게 사용해야 하는지 궁금함.
+>
+> 💡 AI의 답변:
+> 파일을 다른 폴더로 옮길 때는 mv [옮길 파일명] [목적지 폴더 경로] 순서로 입력하면 된다. mv 명령어 하나로 파일의 경로(위치)와 이름을 모두 제어할 수 있다. 자주 쓰이는 3가지 활용법은 다음과 같다.
+> 하위 폴더(새 방)로 이동: mv text.txt backup/
+> 상위 폴더(바깥 방)로 끄집어낼 때: mv text.txt .. (..은 상위 디렉토리를 의미함)
+> 위치를 옮기며 이름도 동시에 바꿀 때: mv text.txt backup/new.txt
+>
+> ❓ 나의 질문: 문서 작성 중 코드블록 안팎에서 # 기호를 쓸 때, 이게 실행에 관여하지 않는 '주석(죽은 줄)'으로 쓰이는지 아니면 단순히 글자를 강조(제목)하는 용도로 쓰이는지 헷갈림.
+>
+> 💡 AI의 답변:
+> '#' 기호는 쓰이는 위치(코드블록 안과 밖)에 따라 역할이 완전히 달라진다.
+> 코드블록(예: bash ... ) 안에서: 마크다운 문법이 아닌 해당 언어(bash)의 규칙을 따른다. 따라서 컴퓨터가 실행하지 않고 건너뛰는 '주석(Comment, 죽은 줄)' 역할을 하므로 안전하게 부연 설명을 적을 수 있다.
+> 코드블록 밖(일반 마크다운)에서: 줄 맨 앞에 쓰면 글자를 크고 진하게 만들어주는 '제목(Header, 강조)' 역할을 한다. (예: ### 4.1.)
 
 ### 4.2. 권한 실습 및 증거 기록
 **검증 방법:** 파일과 디렉토리를 생성하고 `chmod` 명령어로 권한 변경 전과 후를 비교
@@ -171,13 +173,13 @@ drwxrwxrwx@ 2 taek  staff  64 Nov  3 17:02 test_dir
 > 리눅스 설계자들은 `touch` 명령어에 아주 자연스러운 규칙을 하나 추가했다.
 > *"시간을 업데이트하라고 지시받은 파일이 만약 현재 폴더에 없다면? 에러를 띄우지 말고, 일단 빈 파일을 새로 만든 다음 그 파일의 시간을 '지금'으로 찍어주자!"*
 > 텍스트 편집기를 열고 닫을 필요 없이 `touch 파일명` 명령어 한 줄만 치면 0바이트짜리 빈 껍데기 파일을 순식간에 만들 수 있기 때문에, 이 엄청난 편리함 덕분에 현재는 전 세계 개발자들에게 '초고속 빈 파일 생성기'로 굳어져서 쓰이고 있다.
-
+>
 > **❓ 나의 질문:** `codyssey-practice`는 분명히 폴더인데, 왜 목록에서 `d`가 아니라 `-`로 표시되는지?
 >
 > **💡 AI의 답변:** 
 > 터미널 상의 현재 위치가 이미 `codyssey-practice` 폴더 '내부'로 들어와 있기 때문이다. 방 안에 들어와서 바닥에 놓인 '일반 파일'들만 조회했으므로 첫 글자가 `-`로 출력된 것이다. 
 > 해당 폴더 자체의 자물쇠 상태(`d`)를 보려면 상위 폴더로 한 칸 나가서(`cd ..`) 조회하거나, 현재 위치한 디렉토리 자체의 정보를 보여주는 명령어(`ls -ld .`)를 사용해야 한다.
-
+>
 > **❓ 나의 질문:** 
 > 1) 내가 만든 파일인데 왜 소유자인 나한테도 '실행' 권한이 없는지? 
 > 2) `ls -l` 결과 맨 위에 뜨는 `total 0`은 무엇인지? 
@@ -190,13 +192,13 @@ drwxrwxrwx@ 2 taek  staff  64 Nov  3 17:02 test_dir
 >    - **소유자(User):** 파일을 생성한 주체 (`taek`).
 >    - **그룹(Group):** 특정 권한을 공유하는 사용자 묶음 (맥의 경우 기본 `staff` 그룹에 속함).
 >    - **기타 사용자(Others):** 동일 시스템에 로그인할 수 있는 다른 모든 계정 (예: 게스트 계정 등).
-
+>
 > **❓ 나의 질문:** 지금 내 맥북은 혼자 쓰는 로컬 환경인데도, 시스템 자체가 '서버(다중 사용자)' 환경을 전제로 설계되었다는 뜻인지?
 >
 > **💡 AI의 답변:** 
 > 정확하다. macOS와 Linux의 뿌리인 '유닉스(Unix)'는 거대한 컴퓨터 한 대에 여러 명이 동시 접속해 사용하는 환경을 위해 탄생했다.
 > 비록 현재는 개인용 노트북으로 사용하고 있지만, 이 '다중 사용자 기반의 엄격한 권한 시스템'은 그대로 유지되고 있다. 오늘날 이 시스템은 내가 설치한 특정 앱이나 다운로드한 파일(악성 코드 등)이 시스템 전체를 망가뜨리거나 다른 프로그램의 데이터를 훔쳐보지 못하도록 격리하는 핵심 보안 방어막 역할을 한다.
-
+>
 > **❓ 나의 질문:** 권한을 표시할 때 읽기=4, 쓰기=2, 실행=1(또는 e?)로 표기하는 것이 맞는지? 또 다른 숫자도 존재하는지 궁금함.
 >
 > **💡 AI의 답변:** 
@@ -206,7 +208,7 @@ drwxrwxrwx@ 2 taek  staff  64 Nov  3 17:02 test_dir
 > (예: 7 = 4+2+1 모든 권한 / 6 = 4+2 읽기+쓰기 / 5 = 4+1 읽기+실행)
 >
 > 이 숫자들이 1, 2, 4인 이유는 이진수(비트) 스위치 방식을 따르기 때문이다. 이 방식을 사용하면 권한의 숫자 합(예: 3은 무조건 2+1)이 절대 중복되지 않아 컴퓨터가 권한 상태를 정확하게 해석할 수 있다.
-
+>
 > **❓ 나의 질문:** `echo` 명령어와 리다이렉션(`>`) 기호를 쓸 때, 지정한 파일(`run.sh`)이 없으면 `touch`처럼 알아서 새 파일을 만들고 내용을 덮어쓰는 방식으로 작동하는 것인지 궁금함.
 >
 > **💡 AI의 답변:** 
@@ -215,7 +217,7 @@ drwxrwxrwx@ 2 taek  staff  64 Nov  3 17:02 test_dir
 > *참고: 리다이렉션 기호의 종류*
 > * **`>` (덮어쓰기):** 파일이 없으면 새로 만들고, 이미 있으면 **기존 내용을 모두 지우고** 새 내용으로 덮어쓴다.
 > * **`>>` (이어쓰기):** 파일이 없으면 새로 만들고, 이미 있으면 기존 내용을 보존한 채 **맨 아랫줄에 내용을 추가(Append)**한다.
-
+>
 > **❓ 나의 질문:** 리다이렉션 기호(`>`)는 `echo` 명령어에만 쓰이는 것인지, 아니면 다른 명령어와도 조합해서 쓸 수 있는지 궁금함.
 >
 > **💡 AI의 답변:** 
@@ -225,7 +227,7 @@ drwxrwxrwx@ 2 taek  staff  64 Nov  3 17:02 test_dir
 > * `ls -l > list.txt` : 현재 디렉토리의 파일 상세 목록을 텍스트 파일로 저장.
 > * `cat file1.txt file2.txt > merge.txt` : 두 파일의 내용을 합쳐서 새로운 파일로 병합.
 > * `ps aux > process_list.txt` : 현재 실행 중인 프로세스 전체 목록을 파일로 기록.
-
+>
 > **❓ 나의 질문:** `chmod +x run.sh` 명령어에서 `+x`는 소유자, 그룹, 기타 사용자 구분 없이 일괄적으로 실행 권한을 부여하는 것인지 궁금함.
 >
 > **💡 AI의 답변:** 
@@ -236,7 +238,7 @@ drwxrwxrwx@ 2 taek  staff  64 Nov  3 17:02 test_dir
 > * `u+x` : 소유자(User)에게만 실행 권한 추가
 > * `g-w` : 그룹(Group)의 쓰기 권한 뺏기
 > * `o+r` : 기타 사용자(Others)에게 읽기 권한 추가
-
+>
 > **❓ 나의 질문:** `run.sh` 파일에 넣은 `echo 'Hello Permission'`이 출력될 때, `echo`가 자동으로 명령어로 기능하게 된 것인지? 그리고 명령어 작성 시 큰따옴표(`"`)와 작은따옴표(`'`)는 각각 어떤 역할을 했는지 궁금함.
 >
 > **💡 AI의 답변:** 
@@ -247,13 +249,13 @@ drwxrwxrwx@ 2 taek  staff  64 Nov  3 17:02 test_dir
 > 따옴표는 띄어쓰기가 포함된 문장을 '하나의 덩어리'로 묶어주는 역할을 한다. 두 가지를 섞어 쓴 이유는 컴퓨터가 따옴표의 시작과 끝을 헷갈리지 않게 **안과 밖을 구분하기 위해서**다.
 > * **바깥쪽 큰따옴표(`"..."`):** 첫 번째(바깥쪽) `echo`에게 "이 안의 내용을 쪼개지 말고 통째로 `run.sh`에 넣어라"고 지시하는 포장지 역할.
 > * **안쪽 작은따옴표(`'...'`):** 파일 안에 기호 그대로 저장된 뒤, 훗날 스크립트가 실행될 때 두 번째(안쪽) `echo`가 출력할 텍스트(`Hello Permission`)를 묶어주는 역할.
-
+>
 > **❓ 나의 질문:** 쉘 스크립트(Shell Script)라는 게 정확히 무엇인지?
 >
 > **💡 AI의 답변:** 
 > 쉘 스크립트는 여러 개의 터미널 명령어들을 텍스트 파일 하나에 순서대로 기록해 둔 **'명령어 자동화 대본(매크로)'**이다.
 > 매번 수동으로 하나씩 입력해야 하는 명령어들(예: 폴더 생성, 파일 생성, 권한 변경 등 연속된 작업)을 파일 하나에 모아두고 실행 권한(`+x`)을 주면, 사용자가 파일을 실행(`./파일명.sh`)하는 순간 컴퓨터가 파일 안의 명령어들을 위에서부터 순서대로 일괄 자동 실행한다. 서버 세팅이나 자동 백업 등 반복적인 작업을 처리할 때 필수적으로 사용된다.
-
+>
 > **❓ 나의 질문:** 파일의 x는 프로그램을 실행하는 권한이라 배웠는데, 폴더(디렉토리)에 부여하는 실행(x) 권한은 어떤 역할을 하는 것인지?
 >
 > **💡 AI의 답변:**
@@ -264,7 +266,6 @@ drwxrwxrwx@ 2 taek  staff  64 Nov  3 17:02 test_dir
 ### 4.3. Docker 설치 및 기본 점검
 **검증 방법:** 터미널에서 Docker 버전을 확인하고, 데몬(엔진)이 정상적으로 백그라운드에서 동작하고 있는지 상세 정보를 출력하여 점검한다.
 
-**1. 기본 점검 실습 로그**
 ```bash
 taek@OHs-MacBook-Air codyssey-practice % docker --version
 Docker version 29.9.2, build a82e528
@@ -311,53 +312,46 @@ Server:
 > 
 > 즉, `docker info`에서 데몬 동작 여부를 확인한다는 것은 "내 명령어를 받아 실제로 처리해 줄 백그라운드 엔진이 정상적으로 켜져 있는가?"를 점검하는 필수 과정이다.
 
-### 4.4. 컨테이너 실행 실습
-**검증 방법:** `hello-world`와 `ubuntu` 컨테이너를 차례로 실행하고 내부 진입 실험 수행
+### 4.4. Docker 기본 운영 명령 수행
+**검증 방법:** Nginx 이미지를 다운로드하고 컨테이너를 백그라운드에서 실행한 뒤, 상태/로그/리소스를 모니터링하고 최종적으로 종료하는 전체 과정을 점검한다.
 ```bash
-taek@OHs-MacBook-Air mission_1-1 % docker run hello-world
-Unable to find image 'hello-world:latest' locally
-latest: Pulling from library/hello-world
-58dee6a49ef1: Pull complete 
-c3bdf82c34d1: Download complete 
-Digest: sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
-Status: Downloaded newer image for hello-world:latest
+taek@OHs-MacBook-Air codyssey-practice % docker pull nginx:alpine
+alpine: Pulling from library/nginx
+Status: Image is up to date for nginx:alpine
+docker.io/library/nginx:alpine
 
-Hello from Docker!
-This message shows that your installation appears to be working correctly.
+taek@OHs-MacBook-Air codyssey-practice % docker images
+IMAGE                ID             DISK USAGE   CONTENT SIZE   EXTRA
+hello-world:latest   c567b231f656       22.6kB         10.3kB    U   
+nginx:alpine         785835ea65db       94.1MB         27.2MB        
+ubuntu:latest        6a06111c3b0a        181MB         44.9MB    U   
 
-To generate this message, Docker took the following steps:
- 1. The Docker client contacted the Docker daemon.
- 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
-    (arm64v8)
- 3. The Docker daemon created a new container from that image which runs the
-    executable that produces the output you are currently reading.
- 4. The Docker daemon streamed that output to the Docker client, which sent it
-    to your terminal.
+taek@OHs-MacBook-Air codyssey-practice % docker run -d --name my_web nginx:alpine
+470eb98f3e9273ae2b4130dd0ee51015e1ec1de0264ac796238ed1215641c6dd
 
-To try something more ambitious, you can run an Ubuntu container with:
- $ docker run -it ubuntu bash
+taek@OHs-MacBook-Air codyssey-practice % docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS     NAMES
+470eb98f3e92   nginx:alpine   "/docker-entrypoint.…"   3 seconds ago   Up 3 seconds   80/tcp    my_web
 
-Share images, automate workflows, and more with a free Docker ID:
- https://hub.docker.com/
+taek@OHs-MacBook-Air codyssey-practice % docker logs my_web
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+# ... (중략) ...
+2026/11/04 07:07:24 [notice] 1#1: start worker processes
+2026/11/04 07:07:24 [notice] 1#1: start worker process 39
 
-For more examples and ideas, visit:
- https://docs.docker.com/get-started/
+taek@OHs-MacBook-Air codyssey-practice % docker stats --no-stream my_web
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT     MEM %     NET I/O        BLOCK I/O         PIDS
+470eb98f3e92   my_web    0.00%     19.48MiB / 7.748GiB   0.25%     1.7kB / 126B   10.4MB / 12.3kB   11
 
-taek@OHs-MacBook-Air mission_1-1 % docker run -it ubuntu bash
-Unable to find image 'ubuntu:latest' locally
-latest: Pulling from library/ubuntu
-6f01cc7d6fb3: Pull complete 
-afa7f7d582de: Pull complete 
-d597c14cfeb9: Download complete 
-Digest: sha256:6a06111c3b0a8600feadb270aec771dc239bf407b25625f93f44ab00e11f4d3c
-Status: Downloaded newer image for ubuntu:latest
-root@753aa9e3ea74:/# ls
-bin   dev  home  media  opt   root  sbin  sys  usr
-boot  etc  lib   mnt    proc  run   srv   tmp  var
-root@753aa9e3ea74:/# echo hi
-hi
-root@753aa9e3ea74:/# exit
-exit```
+taek@OHs-MacBook-Air codyssey-practice % docker stop my_web
+my_web
+
+taek@OHs-MacBook-Air codyssey-practice % docker ps -a
+CONTAINER ID   IMAGE          COMMAND                  CREATED              STATUS                     PORTS     NAMES
+470eb98f3e92   nginx:alpine   "/docker-entrypoint.…"   About a minute ago   Exited (0) 4 seconds ago             my_web
+753aa9e3ea74   ubuntu         "bash"                   25 hours ago         Exited (0) 25 hours ago              suspicious_ritchie
+8679578d7961   hello-world    "/hello"                 25 hours ago         Exited (0) 25 hours ago              pensive_gagarin
+```
 
 ### 4.5. 기존 Dockerfile 기반 커스텀 이미지 제작
 * **선택한 베이스 이미지:** (예: NGINX, Ubuntu 등)
