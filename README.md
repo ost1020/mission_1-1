@@ -1149,5 +1149,3 @@ Hi ost102079! You've successfully authenticated, but GitHub does not provide she
 > 3. 이후 맥북(터미널이나 VS Code 등)에서 `git push`로 코드를 전송할 때마다, 깃허브는 묻지도 따지지도 않고 맥북이 가진 '비밀키'를 통해 수학적 암호를 푼다.
 > 
 > 결과적으로 이 비밀키를 품고 있는 맥북은 깃허브로부터 VIP 인증을 받은 셈이 되어, 앞으로 아이디나 비밀번호 입력 없이 영구적으로 안전하고 빠른 코드 푸시(Push)가 가능해진다.
-=======
->>>>>>> 1e2bfc6a4286304a9daf49f267427cb837a29f8d
