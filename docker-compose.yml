@@ -1,0 +1,13 @@
+services:
+  my_web_server:
+    image: nginx:alpine
+    container_name: compose_web
+    ports:
+      - "8080:80"
+    environment:                     # <-- 새로 추가된 부분
+      - APP_MODE=development         # <-- 앱 상태를 알려주는 변수 주입
+      - SECRET_API_KEY=super_1234    # <-- 가상의 비밀 키 주입
+
+  my_cache_server:
+    image: redis:alpine
+    container_name: compose_redis
