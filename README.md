@@ -616,6 +616,7 @@ taek@OHs-MacBook-Air my-nginx % docker run -d -p 8080:80 --name my_custom_web ta
 taek@OHs-MacBook-Air my-nginx % curl http://localhost:8080
 <h1>Hello Codyssey! This is Taek's Custom Nginx Server!</h1>
 ```
+![alt text](<브라우저 접속 화면.png>)
 
 **추가 학습 및 Q&A (HTML 태그, 이스케이프 문자, 리다이렉션 기호)**
 
@@ -858,6 +859,27 @@ This data will survive!
 > 1. **바인드 마운트의 경우:** 호스트(맥북)의 실제 로컬 하드디스크 폴더에 그대로 남는다. 애초에 로컬 파일을 참조(링크)한 것이기 때문이다.
 > 2. **도커 볼륨의 경우:** 질문자의 직관대로 **'가상 환경'**에 남는다. 정확히는 Mac 내부에 도커가 백그라운드로 띄워둔 '가상 리눅스 머신(VM)' 내부의 도커 전용 관리 구역에 저장되어 유지된다. 
 > 결론적으로 컨테이너라는 '실행 환경'이 파괴되어도, 볼륨이 속해있는 '가상 OS 환경(VM)'은 계속 구동 중이므로 데이터가 안전하게 생존할 수 있다.
+
+### 4.9. 🔧 Git 및 GitHub 연동 설정 증명
+
+## 1. Git 환경 설정 내역 (`git config --list`)
+```bash
+credential.helper=osxkeychain
+user.name=ost***
+user.email=ost***@gmail.com
+init.defaultbranch=main
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+remote.origin.url=https://github.com/ost1020/mission_1-1.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+```
+
+![alt text](<깃허브 연동.png>)
 
 ---
 
