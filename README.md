@@ -14,13 +14,13 @@
 ## 3. 수행 체크리스트
 - [x] 터미널 기본 조작 및 폴더 구성
 - [x] 권한 변경 실습
-- [x] Docker 설치 및 기본 점검
-- [x] 컨테이너 실행 실습 (hello-world, ubuntu)
-- [ ] 기존 Dockerfile 기반 커스텀 이미지 제작
-- [ ] 포트 매핑 및 접속 증거
-- [ ] 바인드 마운트 반영 증거
-- [ ] Docker 볼륨 영속성 검증
-- [ ] Git 설정 및 GitHub 연동
+- [x] Docker 설치/점검
+- [x] hello-world 실행
+- [x] Dockerfile 빌드/실행
+- [x] 포트 매핑 접속(2회)
+- [x] 바인드 마운트 반영
+- [x] 볼륨 영속성
+- [x] Git 설정 + VSCode GitHub 연동
 
 ---
 
@@ -355,6 +355,16 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED              STAT
 
 **추가 학습 및 Q&A**
 
+> **❓ 나의 질문:** `docker pull nginx:alpine` 명령어에서 `pull`은 무엇이고, `nginx:alpine`은 구체적으로 어떤 의미를 담고 있는지?
+>
+> **💡 AI의 답변:** 
+> 스마트폰 앱스토어에서 앱을 검색하고 다운로드하는 과정과 동일한 원리다.
+> * **`pull` (가져오기):** 도커 허브(Docker Hub)라는 공식 저장소에서 원하는 프로그램의 '이미지(설치 원본 파일)'를 내 컴퓨터로 다운로드하라는 명령어다.
+> * **`nginx:alpine` (프로그램 이름:버전):** 다운로드할 타겟의 정확한 명칭이다.
+>   * **`nginx`:** 전 세계적으로 널리 쓰이는 가볍고 빠른 웹 서버 프로그램.
+>   * **`:` (콜론):** 프로그램의 이름과 버전(태그)을 구분하는 기호.
+>   * **`alpine`:** 초경량 운영체제인 Alpine Linux를 기반으로 불필요한 도구를 모두 제거한 '초소형 버전'을 뜻한다. 용량이 20~30MB 수준으로 매우 작아 다운로드와 실행 속도가 매우 빠르다.
+>
 > **❓ 나의 질문:** `docker pull` 결과에 나온 `Status: Image is up to date...`와 마지막 줄의 `docker.io/library/nginx:alpine`은 무슨 의미인지? 마지막 줄은 docker.io라는 웹의 library 디렉토리에서 가져왔다는 뜻인지?
 >
 > **💡 AI의 답변:** 
@@ -364,7 +374,7 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED              STAT
 >   * `docker.io`: 기본 도커 레지스트리(Docker Hub 웹사이트)
 >   * `library`: 도커 공식 이미지들이 모여있는 기본 네임스페이스(디렉토리)
 >   * `nginx:alpine`: 다운로드한 이미지 이름과 버전(태그)
-
+>
 > **❓ 나의 질문:** `docker images` 결과에서 `ID`와 `EXTRA` 항목(특히 `U` 표시)은 무엇을 의미하는지?
 >
 > **💡 AI의 답변:** 
@@ -437,59 +447,275 @@ CONTAINER ID   IMAGE          COMMAND                  CREATED              STAT
 > * **`PORTS`와 `NAMES` 컬럼의 분리:** 
 >   표에서 `PORTS`(네트워크 출입문)와 `NAMES`(컨테이너 이름)는 서로 다른 항목이다. 컨테이너가 실행 중(`Up`)일 때는 `PORTS` 항목에 `80/tcp`처럼 개방된 포트가 표시되지만, `stop` 명령으로 종료한 후에는 통신 문이 닫히기 때문에 `PORTS` 항목이 빈칸으로 표시된다. (우측 끝의 `my_web`은 `NAMES` 항목임)
 
-### 4.5. 기존 Dockerfile 기반 커스텀 이미지 제작
-* **선택한 베이스 이미지:** (예: NGINX, Ubuntu 등)
-* **커스텀 포인트 목적:** (예: 나만의 정적 웹페이지 콘텐츠 추가)
-* **작성한 Dockerfile:**
-```dockerfile
-(작성한 Dockerfile 코드 복사붙여넣기)
-```
-* **빌드 및 실행 로그:**
+> **❓ 나의 질문:** Nginx 컨테이너를 왜 굳이 백그라운드(`-d`)로 실행하라고 미션이 주어졌던 걸까?
+>
+> **💡 AI의 답변:** 
+> Nginx와 같은 **서버용 프로그램의 특성** 때문이다. 서버는 한 번 실행되면 종료되지 않고 24시간 대기하며 트래픽을 처리해야 한다.
+> * **포그라운드(옵션 없음) 실행 시:** 컨테이너가 터미널의 포커스(제어권)를 독점하게 되어 다른 명령어를 입력할 수 없다. 이를 빠져나오기 위해 강제 종료(`Ctrl+C`)를 누르면 서버 프로세스도 함께 죽어버린다.
+> * **백그라운드(`-d`) 실행 시:** 컨테이너의 메인 프로세스(웹 서버)는 시스템 백그라운드에서 안전하게 계속 동작하도록 분리하고, 사용자는 즉시 터미널 제어권을 돌려받아 `docker ps`, `docker logs` 등 다른 작업을 방해 없이 수행할 수 있다.
+
+### 4.5. 컨테이너 실행 실습
+**검증 방법:** `hello-world` 이미지를 통해 기본 구동을 확인하고, 터미널 진입(`-it`)을 통해 내부 명령어를 수행해 본다. 이후 컨테이너를 빠져나올 때 완전히 종료되는 경우와 백그라운드에서 유지되는 경우의 차이를 관찰한다.
+
+**실습 로그(1) (bash 이미지로 잘못 진입)**
 ```bash
-(docker build 및 docker run 명령어와 그 결과 복사붙여넣기)
+taek@OHs-MacBook-Air codyssey-practice % docker run hello-world
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+taek@OHs-MacBook-Air codyssey-practice % docker run -it --name my_ubuntu bash
+latest: Pulling from library/bash
+Status: Downloaded newer image for bash:latest
+bash-5.3# ls
+bin    etc    lib    mnt    proc   run    srv    tmp    var
+dev    home   media  opt    root   sbin   sys    usr
+bash-5.3# echo "Hello Ubuntu"
+Hello Ubuntu
+bash-5.3# exit
+exit
+
+taek@OHs-MacBook-Air codyssey-practice % docker ps -a
+CONTAINER ID   IMAGE          STATUS                         NAMES
+da2be5576f78   bash           Exited (0) 8 seconds ago       my_ubuntu
+
+taek@OHs-MacBook-Air codyssey-practice % docker start my_ubuntu
+my_ubuntu
+taek@OHs-MacBook-Air codyssey-practice % docker exec -it my_ubuntu bash
+bash-5.3# exit
+exit
 ```
+**실습 로그(2) (우분투 이미지)**
 
-### 4.6. 포트 매핑 및 접속 증거
-**검증 방법:** `-p` 옵션으로 포트 매핑 실행 후 브라우저 접속 화면 확인
-* (브라우저 주소창에 `localhost:포트번호`를 입력하여 접속한 화면 캡처 이미지 첨부)
-
-### 4.7. 바인드 마운트 및 볼륨 영속성 검증
-**검증 방법:** 
-1. **바인드 마운트:** 명령어로 호스트 폴더 연결 후 호스트 파일 변경이 컨테이너에 반영되는지 확인
-2. **볼륨:** `docker volume create`로 볼륨 생성 및 연결, 컨테이너 삭제 후 재생성 시 데이터 유지 확인
 ```bash
-(바인드 마운트 테스트 관련 명령어 및 결과 로그)
+taek@OHs-MacBook-Air codyssey-practice % docker run -it --name my_ubuntu ubuntu bash
+root@2f4d02ba4043:/# ls
+bin   dev  home  media  opt   root  sbin  sys  usr
+boot  etc  lib   mnt    proc  run   srv   tmp  var
+root@2f4d02ba4043:/# echo "Hello Ubuntu"
+Hello Ubuntu
+root@2f4d02ba4043:/# exit
+exit
 
-(볼륨 생성, 컨테이너 연결, 데이터 작성, 컨테이너 삭제, 재생성, 데이터 확인 관련 전체 로그 복사붙여넣기)
+taek@OHs-MacBook-Air codyssey-practice % docker ps -a
+CONTAINER ID   IMAGE          STATUS                      NAMES
+2f4d02ba4043   ubuntu         Exited (0) 3 seconds ago    my_ubuntu
+
+taek@OHs-MacBook-Air codyssey-practice % docker start my_ubuntu
+my_ubuntu
+taek@OHs-MacBook-Air codyssey-practice % docker exec -it my_ubuntu bash
+root@2f4d02ba4043:/# exit
+exit
+
+taek@OHs-MacBook-Air codyssey-practice % docker ps
+CONTAINER ID   IMAGE     STATUS          NAMES
+2f4d02ba4043   ubuntu    Up 17 seconds   my_ubuntu
 ```
 
-### 4.8. Git 설정 및 GitHub 연동
-**검증 방법:** 사용자 정보 설정 확인 및 VSCode에서 GitHub 연동 상태 확인
+**추가 학습 및 Q&A**
+
+> **❓ 나의 질문:** docker run -it 또는 docker exec -it 명령어에서 -it는 구체적으로 무슨 약자이며 어떤 역할을 하는지?
+
+> **💡 AI의 답변:**
+> it는 컨테이너 내부와 사용자가 키보드로 직접 대화(상호작용)하기 위해 두 가지 옵션을 합쳐 놓은 것이다.
+> i (Interactive): 사용자가 터미널에 입력하는 키보드 입력(표준 입력, STDIN)을 컨테이너 쪽으로 계속 열어두어 전달하겠다는 뜻이다.
+> t (TTY): 컨테이너 쪽에 가상의 터미널(Teletypewriter) 화면을 할당해 주어, 우리가 흔히 아는 쉘 프롬프트(bash#, root@...# 등)를 띄워주고 예쁘게 포맷팅된 텍스트를 볼 수 있게 해준다.
+> 이 두 가지를 같이 써야만 비로소 우리가 리눅스 컴퓨터에 원격 접속한 것처럼 자연스럽게 명령어를 치고 결과를 볼 수 있다.
+
+> **❓ 나의 질문:** 컨테이너 실행 실습에서 사용한 `hello-world`라는 이미지의 애초 목적과 정체는 무엇인지?
+>
+> **💡 AI의 답변:** 
+> **1. 프로그래밍의 전통:** `Hello, World!`는 새로운 프로그래밍 언어나 환경을 처음 접할 때, 시스템이 정상적으로 작동하는지 확인하기 위해 가장 먼저 화면에 출력해보는 전 세계 개발자들의 전통적인 테스트 문구다.
+> **2. 도커에서의 역할:** 도커 공식 `hello-world` 이미지는 사용자의 컴퓨터에 도커 엔진(데몬)이 정상적으로 설치되고 통신할 수 있는지 검증하기 위해 만들어진 초경량 테스트 이미지다.
+> **3. 즉시 종료되는 이유:** 웹 서버(Nginx)처럼 백그라운드에서 지속적으로 대기해야 하는 서비스가 아니라, "화면에 환영 메시지를 출력한다"는 단일 목적만 가진 프로그램이기 때문이다. 메시지 출력이 끝나면 임무를 다하고 정상 종료(`Exited (0)`) 상태가 된다.
+
+> **❓ 나의 질문:** 우분투(OS)와 배쉬(Bash)가 모두 도커 '이미지'인지? 그리고 Bash는 `nano` 같은 편집기인지, 왜 코드 블록에 `bash`라고 표기하는지 궁금함.
+>
+> **💡 AI의 답변:** 
+> **1. 둘 다 도커 이미지가 맞다:** 도커 이미지는 OS 전체(Ubuntu)를 담을 수도 있고, 특정 단일 프로그램(Bash, Nginx) 실행에 목적을 둔 가벼운 형태로도 존재한다.
+> **2. Bash의 정체 (Shell):** `nano`는 텍스트 편집기인 반면, `Bash(Bourne Again Shell)`는 사용자가 터미널에 입력한 명령어를 운영체제가 알아듣게 번역해 주는 **'명령어 해석기(통역사)'**다.
+> **3. 코드 블록의 `bash` 표기:** 마크다운 작성 시 ````bash`로 묶는 것은, 해당 텍스트가 일반 문서가 아니라 터미널(Bash 쉘) 환경에서 실행할 '명령어'임을 명시하여 시각적으로 색상을 구분(Syntax Highlighting)하기 위함이다.
+
+> **❓ 나의 질문:** `bash`는 단순한 통역사 프로그램일 뿐 OS(우분투 등)가 아닌데, 어떻게 그 컨테이너 안에서 `ls` 같은 OS 터미널 명령어를 치고 결과를 받을 수 있는지? 모든 컨테이너 내부에서는 이미지 종류와 무관하게 이런 작업이 가능한 것인지 궁금함.
+>
+> **💡 AI의 답변:** 
+> **1. 도커 이미지의 레이어(Layer) 구조:** 
+> `bash` 이미지는 통역사 프로그램 단 하나만 존재하는 것이 아니라, 그 실행을 뒷받침하기 위해 바닥에 **초경량 미니 OS(주로 Alpine Linux)가 베이스 이미지로 함께 깔려있다.** 따라서 사용자가 입력한 `ls`, `echo` 등의 명령어는 Bash를 거쳐 기저에 있는 미니 OS가 처리하여 결과를 반환하는 것이다.
+>
+> **2. 다른 컨테이너에서의 명령어 실행 여부:**
+> 대부분의 도커 이미지(Nginx, DB 등)는 구동을 위해 내부에 최소한의 OS 환경과 기본 쉘(`sh` 또는 `bash`)을 포함하고 있다. 따라서 어떤 프로그램의 이미지든 `exec -it` 명령으로 쉘에 진입하기만 하면, 기저 OS가 제공하는 한도 내에서 자유롭게 명령어를 치고 내부를 제어할 수 있다.
+>
+>
+> **❓ 나의 질문:** 컨테이너를 다룰 때 사용하는 `run`, `start`, `exec` 명령어는 각각 어떤 상황에서 쓰는 것이며, 정확한 차이는 무엇인지?
+>
+> **💡 AI의 답변:** 
+> 세 가지는 컨테이너의 생애주기(Lifecycle)에서 완전히 다른 역할을 담당한다. 비유하자면 다음과 같다.
+>
+> * **`docker run` (창조 + 실행):**
+>   * 붕어빵 틀(이미지)에서 **'새로운 붕어빵(컨테이너)을 처음 구워내면서 동시에 전원까지 켜는'** 명령어다. 내 컴퓨터에 없던 컨테이너를 새로 만들어낼 때 무조건 처음 한 번 쓴다.
+>
+> * **`docker start` (재부팅):**
+>   * 이미 구워져 있지만 현재 **전원이 꺼져 있는(Exited) 기존 컨테이너의 '전원 버튼만 다시 누르는'** 명령어다. (새로운 컨테이너를 생성하는 것이 아님)
+>
+> * **`docker exec` (실행 중인 곳에 접속):**
+>   * **이미 전원이 켜져서 잘 돌아가고 있는(Up)** 컨테이너에 '보조 출입문(새로운 프로세스)'을 열고 들어가 추가 명령을 내리는 명령어다. 메인 프로세스를 건드리지 않기 때문에, 볼일을 다 보고 `exit`로 빠져나와도 컨테이너의 전원은 꺼지지 않는다.
+>
+> **❓ 나의 질문:** `docker run -it --name my_ubuntu bash` 같은 명령어도 자연어처럼 정해진 어순(문법)이 있는지? 그리고 `--name`은 이름을 설정하라는 뜻인지?
+>
+> **💡 AI의 답변:** 
+> **1. 도커 명령어의 어순:**
+> 명령어는 일반적으로 `docker [동사(명령어)] [부사(옵션들)] [목적어(이미지)] [추가 실행 명령]`의 순서를 따른다.
+> * 예: `docker run(동사) -it --name my_ubuntu(옵션들) ubuntu(이미지) bash(추가 명령)`
+> * **주의점:** 옵션들 사이의 순서는 바뀌어도 무방하나, **실행할 타겟 이미지의 이름은 반드시 모든 옵션보다 뒤에 명시**해야 한다.
+>
+> **2. `--name` 옵션의 역할:**
+> 사용자가 유추한 대로 컨테이너에 명시적인 고유 이름을 부여하는 옵션이다. 이 옵션을 생략하면 도커 엔진이 임의의 랜덤 이름(`형용사_위인이름` 조합)을 자동으로 부여하므로, 관리를 위해 실무에서는 대부분 `--name` 옵션을 통해 식별하기 쉬운 이름을 지정한다.
+
+> **❓ 나의 질문:** 4-4 실습에서는 `pull`로 이미지를 먼저 다운받았지만, 4-5에서는 `pull` 없이 `run`만 쳐도 알아서 실행되었다. 애초에 `pull` 명령어는 생략해도 되는 것인지, 그렇다면 왜 따로 존재하는 것인지?
+>
+> **💡 AI의 답변:** 
+> **1. `run` 명령어의 자동 `pull` 기능:** 
+> `docker run` 명령어는 매우 스마트해서, 타겟 이미지가 로컬 환경에 없을 경우 자동으로 `pull` 과정을 먼저 수행한 뒤 컨테이너를 실행한다. (실제로 4-5 실습 로그 첫 줄에 `Unable to find image... Pulling from...` 메시지가 출력된 것을 확인할 수 있다.) 따라서 단순 실행이 목적이라면 생략이 가능하다.
+>
+> **2. `pull` 명령어를 따로 사용하는 이유 (실무적 관점):**
+> * **원리 분리:** '이미지 다운로드'와 '컨테이너 생성'이 별개의 라이프사이클임을 명확히 인지하기 위함이다.
+> * **사전 준비(Pre-fetching):** 실무에서는 용량이 큰 이미지를 실행 시점에 다운받으면 서비스 지연이 발생하므로, 사전에 `pull`만 따로 수행하여 이미지를 미리 준비해 두는 용도로 강력하게 활용된다.
+>
+> **❓ 나의 질문:** 과제 요구사항에 언급된 `attach`는 무엇이며, 우리가 실습한 `exec`와는 어떤 차이가 있는지?
+>
+> **💡 AI의 답변:** 
+> 두 명령어 모두 실행 중인 컨테이너 내부에 접속할 때 쓰이지만, **빠져나올 때(`exit`) 컨테이너가 죽느냐 사느냐**의 결정적인 차이가 있다.
+> * **`attach` (정문 접속 - 종료됨):** 컨테이너의 심장인 '메인 프로세스(PID 1)'에 직접 연결된다. 따라서 접속 후 `exit`를 입력하면 메인 프로세스가 종료되면서 컨테이너 전체의 전원이 꺼진다. (참고로 `run -it`로 처음 실행할 때도 이와 똑같이 메인 프로세스에 연결된 상태가 된다.)
+> * **`exec` (뒷문 접속 - 유지됨):** 메인 프로세스는 건드리지 않고 '새로운 보조 프로세스(서브 쉘)'를 생성하여 우회 접속한다. 따라서 `exit`로 빠져나와도 보조 프로세스만 닫힐 뿐, 컨테이너는 계속 살아서(`Up`) 구동된다. 실무에서는 컨테이너를 실수로 끄는 대참사를 막기 위해 99% `exec`를 사용한다.
+
+### 4.6. 기존 Dockerfile 기반 커스텀 이미지 제작
+**검증 방법:** 기존 Nginx 이미지를 베이스로 삼아, 내가 직접 작성한 정적 웹페이지(HTML)를 띄우는 커스텀 이미지를 빌드하고 실행해 본다.
+
+**1. 베이스 이미지 선택 및 커스텀 포인트**
+* **선택한 베이스 이미지:** `nginx:alpine`
+  * **선택 이유:** 가장 널리 쓰이는 안정적인 웹 서버(Nginx)이면서, 불필요한 기능이 빠진 초경량 버전(Alpine)이라 빠르고 효율적인 빌드가 가능하기 때문.
+* **적용한 커스텀 포인트와 목적 (Dockerfile 구성):**
+  * `FROM nginx:alpine`: 뼈대가 되는 가벼운 웹 서버 환경을 세팅한다.
+  * `COPY index.html /usr/share/nginx/html/index.html`: Nginx가 기본으로 띄워주는 지루한 기본 환영 페이지를, 내가 직접 작성한 커스텀 HTML 파일(`index.html`)로 덮어씌워 나만의 문구가 뜨도록 개조한다.
+
+**2. 빌드/실행 명령 및 핵심 결과**
 ```bash
-taek@OHs-MacBook-Air ~ % git config --global user.name ost1020
-taek@OHs-MacBook-Air ~ % git config --global user.email ost102***@gmail.com
-taek@OHs-MacBook-Air ~ % git config --global --unset init.defualbrainch
-taek@OHs-MacBook-Air ~ % git config --list                             
-credential.helper=osxkeychain
-user.name=ost1020
-user.email=ost102***@gmail.com
-init.defaultbranch=main
+# 1. 커스텀 이미지 빌드 성공 (현재 폴더의 Dockerfile 기준)
+taek@OHs-MacBook-Air my-nginx % docker build -t taek_custom_nginx .
+[+] Building 0.8s (7/7) FINISHED
+ => [internal] load build definition from Dockerfile                      0.0s
+ => [1/2] FROM docker.io/library/nginx:alpine@sha256:785835ea65db...      0.5s
+ => [2/2] COPY index.html /usr/share/nginx/html/index.html                0.1s
+ => exporting to image                                                    0.1s
+ => => naming to docker.io/library/taek_custom_nginx:latest               0.0s
+
+# 2. 빌드한 커스텀 이미지로 컨테이너 실행 (8080포트 개방)
+taek@OHs-MacBook-Air my-nginx % docker run -d -p 8080:80 --name my_custom_web taek_custom_nginx
+87b34ef2a630170c74426a1aed80ef747b348a19f552514061ebb2bb80e6baac
+
+# 3. 내부 웹서버 응답 확인 (커스텀 내용 정상 출력 확인)
+taek@OHs-MacBook-Air my-nginx % curl http://localhost:8080
+<h1>Hello Codyssey! This is Taek's Custom Nginx Server!</h1>
 ```
 
-![깃허브 연동 증명](./비주얼 스튜디오 깃허브 연동.png)
+**추가 학습 및 Q&A (HTML 태그, 이스케이프 문자, 리다이렉션 기호)**
+
+> **❓ 나의 질문:** `echo "<h1>Hello Codyssey\!</h1>" > index.html` 명령어에서 `<h1>`의 정체, 역슬래시(`\`)의 정확한 명칭과 기능, 그리고 리다이렉션 기호(`>`)의 역할은 무엇인지?
+>
+> **💡 AI의 답변:**
+> **1. `<h1>` (HTML 태그):**
+> 리눅스/도커 명령어가 아니라 웹페이지(HTML)의 뼈대를 구성하는 문법이다. 'Heading 1'의 약자로, 브라우저에게 해당 텍스트를 가장 크고 굵은 제목(메인 헤드라인)으로 화면에 렌더링하라는 디자인 지시어다.
+>
+> **2. 역슬래시 `\` (이스케이프 문자, Escape Character):**
+> 터미널에서 특수 기호가 가진 '특수한 기능'을 무력화(탈출, Escape)하고, **순수한 일반 텍스트 기호로 취급**하게 만드는 역할을 한다. Mac의 기본 터미널(zsh)에서는 느낌표(`!`)를 '명령어 히스토리 호출'로 인식하므로, 앞에 `\`를 붙여 일반 문자로 강제 인식시켜 에러를 방지했다.
+>
+> **3. 리다이렉션 기호 `>` (출력 방향 전환):**
+> 터미널 화면에 출력될 내용(`echo`의 결과물)의 방향을 꺾어 파일 안으로 집어넣는 기호다.
+> *   **`>` (덮어쓰기):** 파일이 없으면 새로 생성하고, 파일이 이미 존재하면 기존 내용을 완전히 지운 뒤 새 내용으로 덮어쓴다.
+> *   *(참고) **`>>` (추가하기):*** 기존 내용을 지우지 않고 파일의 맨 아랫줄에 새로운 내용을 조용히 덧붙일(Append) 때 사용한다.
+
+> **❓ 나의 질문:** `cat <<EOF` 문법을 사용할 때 터미널에 뜬 `heredoc`은 무엇이며, 이 과정에서 덮어쓰는 `Dockerfile`은 내가 만든 커스텀 이미지 자체를 의미하는 것인지?
+>
+> **💡 AI의 답변:**
+> **1. HereDoc (Here Document):**
+> 별도의 텍스트 편집기를 열지 않고, "터미널 화면 바로 여기(Here)에서 다중 입력 문서를 작성하겠다"는 의미를 가진 리눅스 문법(`<<`)의 명칭이다. 터미널에 `heredoc>`이라고 표시된 것은 현재 시스템이 입력되는 텍스트를 파일로 넘기기 위해 임시로 꽉 잡고 대기 중인 상태임을 알려주는 프롬프트다.
+>
+> **2. `Dockerfile`과 커스텀 이미지의 차이:**
+> `Dockerfile`은 이미지 자체가 아니라, 이미지를 어떻게 만들어낼지 지시 사항을 적어둔 **'설계도(단순 텍스트 파일)'**다. 반면, 커스텀 이미지는 이 설계도를 바탕으로 `docker build` 명령어를 통해 실제로 구워낸 완성품(`taek_custom_nginx`)을 뜻한다.
+>
+> **3. `COPY` 명령어의 동작:**
+> 호스트(맥북)에 있는 파일을 컨테이너로 '이동(Move)'시키는 것이 아니라, 원본은 그대로 둔 채 '복사(Copy)'하여 지정된 경로(`/usr/share/nginx/html/`)에 덮어씌우는 방식이다.
+
+> **❓ 나의 질문:** `docker build -t taek_custom_nginx .` 명령어에서 `build`, `-t`, `taek_custom_nginx`, 그리고 맨 뒤의 점(`.`)은 각각 어떤 역할을 하는지?
+>
+> **💡 AI의 답변:**
+> *   **`docker build`:** 도커 엔진에게 지정된 폴더의 `Dockerfile`(설계도)을 읽어 들여 새로운 이미지를 생성(빌드)하라는 핵심 명령어.
+> *   **`-t` (Tag):** 새로 생성될 이미지에 사람이 읽고 관리하기 쉬운 '이름표(명찰)'를 부여하겠다는 옵션.
+> *   **`taek_custom_nginx`:** `-t` 옵션을 통해 실제로 부여된 커스텀 이미지의 이름.
+> *   **`.` (점, 현재 디렉토리):** 리눅스에서 마침표 한 개(`.`)는 '현재 작업 중인 폴더'를 의미한다. 도커에게 빌드에 필요한 재료(`Dockerfile`과 `index.html` 등)를 멀리서 찾지 말고 **"현재 있는 이 폴더 안에서 가져와서 써라"**라고 작업장(Build Context)의 위치를 지정해 주는 매우 중요한 기호다.
+
+> **❓ 나의 질문:** `docker run -d -p 8080:80 --name my_custom_web taek_custom_nginx` 명령어에서 각 옵션의 정확한 역할과 `--name`, 그리고 맨 뒤에 적힌 이미지 이름의 관계는 무엇인지?
+>
+> **💡 AI의 답변:**
+> *   **`docker run`:** 도커 프로그램 자체를 켜는 것이 아니라, 지정한 이미지(원본)를 바탕으로 '새로운 컨테이너'를 생성하고 가동하라는 명령어다.
+> *   **`-d` (Detach):** 컨테이너를 백그라운드에서 실행하여 터미널 제어권을 뺏기지 않도록 하는 옵션.
+> *   **`-p 8080:80` (Port Mapping):** `[호스트(맥북) 포트]:[컨테이너 내부 포트]`를 연결하는 옵션. 호스트의 8080번 포트로 들어오는 트래픽을 컨테이너 내부의 Nginx 전용 포트인 80번으로 연결(포워딩)해 준다.
+> *   **`--name my_custom_web`:** 새로 생성되어 **실행될 컨테이너에 부여할 이름(명찰)**이다.
+> *   **`taek_custom_nginx`:** 컨테이너를 만들 때 뼈대로 사용할 **원본 이미지**다. 명령어 문법상 반드시 가장 마지막에 위치해야 한다.
+
+> **❓ 나의 질문:** 포트 매핑 옵션(`-p 8080:80`)에서 앞의 호스트 포트를 굳이 8080으로 설정한 특별한 이유가 있는지? 다른 숫자를 써도 무방한지?
+>
+> **💡 AI의 답변:**
+> 꼭 8080이어야 할 기술적 이유는 없으며, 호스트(맥북)의 사용 중이지 않은 임의의 포트(예: 7777, 9999 등)를 자유롭게 지정해도 무방하다. 
+> 8080을 주로 사용하는 이유는 개발자들 사이의 **관행**이다. 
+> 1. 웹 서버의 기본 포트인 80번과의 직관적인 연관성을 주기 위함이다.
+> 2. OS(macOS/Linux) 특성상 1~1024번 포트는 시스템 예약 포트라 일반 유저 권한으로 바인딩할 때 권한 오류나 기존 서비스(아파치 등)와의 충돌이 발생하기 쉬우므로, 이를 회피하기 위해 8080, 8000, 3000 등의 높은 번호 대역을 개발용으로 즐겨 쓴다.
+
+> **❓ 나의 질문:** 터미널에서 웹 서버의 응답을 확인할 때 사용한 `curl` 명령어는 정확히 무엇이며, 브라우저로 접속하는 것과 어떤 차이가 있는지?
+>
+> **💡 AI의 답변:**
+> `curl`(Client URL)은 커맨드라인 환경에서 데이터를 송수신할 수 있게 해주는 도구다. 
+> * **일반 브라우저:** 서버로부터 받은 HTML 데이터를 시각적으로 렌더링(디자인)하여 화면에 출력한다.
+> * **`curl`:** 서버에 요청을 보내고 돌아온 **'날 것의 원본 데이터(Raw 텍스트)'**를 화면 렌더링 없이 터미널에 그대로 출력한다.
+> * **사용 목적:** GUI 브라우저를 띄울 필요 없이, 터미널 내에서 서버의 정상 작동 여부(포트 오픈 및 응답 상태)를 빠르고 직관적으로 테스트하기 위해 실무에서 매우 자주 사용한다.
+
+### 4.7. 바인드 마운트(Bind Mount) 적용 및 호스트 데이터 변경 전/후 비교
+**검증 방법:** 호스트(맥북)의 특정 폴더를 컨테이너 내부에 마운트(`-v`)하고, 컨테이너 내부에서 데이터를 조작했을 때 호스트의 원본 파일이 실시간으로 동기화(변경)되는지 확인한다.
+
+**1. 호스트 변경 전 (초기 상태)**
+```bash
+taek@OHs-MacBook-Air my-nginx % mkdir ~/bind-test
+taek@OHs-MacBook-Air my-nginx % cd ~/bind-test
+taek@OHs-MacBook-Air bind-test % echo "This is Host(MacBook) Data." > memo.txt
+taek@OHs-MacBook-Air bind-test % cat memo.txt
+This is Host(MacBook) Data.
+
+**2. 바인드 마운트 실행 및 컨테이너 내부에서 데이터 조작**
+# 호스트의 현재 폴더($(pwd))를 컨테이너의 /app 폴더와 연결하여 백그라운드 실행
+taek@OHs-MacBook-Air bind-test % docker run -d --name bind_container -v $(pwd):/app ubuntu sleep 3600
+01183b22b062e666045b87c37edb926601c545650aef1fe6f1e59a6984e67b05
+
+# 컨테이너 내부의 /app/memo.txt 파일에 문자열 이어쓰기(>>) 명령 하달
+taek@OHs-MacBook-Air bind-test % docker exec bind_container sh -c "echo ' -> Added by Docker Container!' >> /app/memo.txt"
+
+**3. 호스트 변경 후 (결과 증거)**
+# 호스트(맥북)에서 다시 원본 파일을 열어 내용 확인
+taek@OHs-MacBook-Air bind-test % cat memo.txt
+This is Host(MacBook) Data.
+ -> Added by Docker Container!
+```
 
 ---
 
-## 5. 트러블슈팅
+### 5. 🛠️ 트러블슈팅 (Troubleshooting)
 
-### 트러블슈팅 1: (발생한 문제 요약)
-* **문제:** (어떤 에러 메시지가 났는지, 어떤 상황이었는지)
-* **원인 가설:** (왜 이런 문제가 발생했다고 생각했는지)
-* **확인:** (가설이 맞는지 어떤 명령어나 방법으로 확인했는지)
-* **해결/대안:** (최종적으로 어떻게 해결했는지)
+**사례 1: 컨테이너 이름 중복 충돌 (Conflict Error)**
+* **문제 발생:** `docker run -it --name my_ubuntu ubuntu bash` 실행 시 `Conflict. The container name "/my_ubuntu" is already in use...` 에러 발생.
+* **원인 가설:** 이전에 생성했다가 종료(`exit`)한 컨테이너가 삭제되지 않고 `my_ubuntu`라는 이름을 계속 점유하고 있을 것이다.
+* **확인:** `docker ps -a` 명령어로 확인 결과, `Exited` 상태인 기존 `my_ubuntu` 컨테이너 발견.
+* **해결 및 대안:** `docker rm my_ubuntu` 명령어로 기존에 종료된 컨테이너를 완전히 삭제한 후 다시 `run` 명령어를 실행하여 정상 진입 완료.
 
-### 트러블슈팅 2: (발생한 문제 요약)
-* **문제:** 
-* **원인 가설:** 
-* **확인:** 
-* **해결/대안:** 
+**사례 2: zsh 환경에서 느낌표(!) 인식 오류**
+* **문제 발생:** `echo "<h1>...Server!</h1>" > index.html` 실행 시 `zsh: event not found: </h1>` 에러 발생.
+* **원인 가설:** Mac의 기본 쉘인 zsh에서 느낌표(`!`)를 일반 문자열이 아닌 '명령어 히스토리 호출(History Expansion)' 특수 문자로 해석하여 발생한 문법 오류일 것이다.
+* **확인:** zsh 공식 문서 및 동작 원리 확인 결과, 큰따옴표 안에서도 `!`가 특수문자로 작동함을 확인.
+* **해결 및 대안:** 느낌표 앞에 이스케이프 문자(역슬래시 `\`)를 붙여 `Hello Codyssey\!` 와 같이 일반 문자로 강제 인식시켜 해결 완료.
