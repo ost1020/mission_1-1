@@ -874,25 +874,3 @@ This data will survive!
 * **원인 가설:** Mac의 기본 쉘인 zsh에서 느낌표(`!`)를 일반 문자열이 아닌 '명령어 히스토리 호출(History Expansion)' 특수 문자로 해석하여 발생한 문법 오류일 것이다.
 * **확인:** zsh 공식 문서 및 동작 원리 확인 결과, 큰따옴표 안에서도 `!`가 특수문자로 작동함을 확인.
 * **해결 및 대안:** 느낌표 앞에 이스케이프 문자(역슬래시 `\`)를 붙여 `Hello Codyssey\!` 와 같이 일반 문자로 강제 인식시켜 해결 완료.
-
-taek@OHs-MacBook-Air bind-test % docker volume create my_data_vol
-my_data_vol
-taek@OHs-MacBook-Air bind-test % docker run -d --name vol_tester -v my_data_vol
-:/workspace
-docker: 'docker run' requires at least 1 argument
-
-Usage:  docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
-
-See 'docker run --help' for more information
-
-What's next:
-    Debug this container error with Gordon → docker ai "help me fix this container error"
-taek@OHs-MacBook-Air bind-test % docker run -d --name vol_tester -v my_data_vol
-:/workspace ubuntu sleep 3600
-b4a43875cb06ba1001e4d5a582b385847becd20399d7bc107ccd9914f2980ae0
-taek@OHs-MacBook-Air bind-test % docker exec vol_tester sh -c "echo 'This data will survive!' > /workspace/secret.txt"
-taek@OHs-MacBook-Air bind-test % docker rm -f vol_tester
-vol_tester
-taek@OHs-MacBook-Air bind-test % docker run --rm -v my_data_vol:/workspace ubun
-tu cat /workspace/secret.txt
-This data will survive!
